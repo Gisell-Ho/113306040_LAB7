@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7 - Grades Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            border: 2px solid #000;
+        }
+        table, th, td {
+            border: 1px solid #000;
+            text-align: center;
+        }
+        th, td {
+            padding: 10px;
+            font-size: 16px;
+        }
+        tfoot {
+            font-weight: bold;
+            background-color: #f1f1f1;
+        }
+        h1 {
+            text-align: center;
+        }
+        .input-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            font-size: 14px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        button {
+            padding: 5px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Grades Submission</h1>
+    <div class="input-container">
+        <label for="mathGrade">Math Grade:</label>
+        <input type="number" id="mathGrade" min="0" max="100" required>
+
+        <label for="englishGrade">English Grade:</label>
+        <input type="number" id="englishGrade" min="0" max="100" required>
+
+        <button id="submitBtn">Submit</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Math</th>
+                <th>English</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody id="gradesTableBody">
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Average</td>
+                <td id="mathAverage">-</td>
+                <td id="englishAverage">-</td>
+                <td id="overallAverage">-</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        const mathInput = document.getElementById('mathGrade');
+        const englishInput = document.getElementById('englishGrade');
+        const submitBtn = document.getElementById('submitBtn');
+        const tableBody = document.getElementById('gradesTableBody');
+        const mathAverageCell = document.getElementById('mathAverage');
+        const englishAverageCell = document.getElementById('englishAverage');
+        const overallAverageCell = document.getElementById('overallAverage');
+
+        let mathScores = [];
+        let englishScores = [];
+        let rowCount = 0;
+
+        submitBtn.addEventListener('click', () => {
+            const mathGrade = parseFloat(mathInput.value);
+            const englishGrade = parseFloat(englishInput.value);
+
+            if (isNaN(mathGrade) || isNaN(englishGrade)) {
+                alert('Please enter valid grades for both subjects.');
+                return;
+            }
+
+            rowCount++;
+
+            // Add grades to arrays
+            mathScores.push(mathGrade);
+            englishScores.push(englishGrade);
+
+            // Add new row to the table
+            const row = document.createElement('tr');
+            const indexCell = document.createElement('td');
+            const mathCell = document.createElement('td');
+            const englishCell = document.createElement('td');
+            const averageCell = document.createElement('td');
+
+            indexCell.textContent = rowCount;
+            mathCell.textContent = mathGrade;
+            englishCell.textContent = englishGrade;
+            const rowAverage = ((mathGrade + englishGrade) / 2).toFixed(2);
+            averageCell.textContent = rowAverage;
+
+            row.appendChild(indexCell);
+            row.appendChild(mathCell);
+            row.appendChild(englishCell);
+            row.appendChild(averageCell);
+            tableBody.appendChild(row);
+
+            // Update averages
+            updateAverages();
+
+            // Clear inputs
+            mathInput.value = '';
+            englishInput.value = '';
+        });
+
+        function updateAverages() {
+            const mathSum = mathScores.reduce((sum, grade) => sum + grade, 0);
+            const englishSum = englishScores.reduce((sum, grade) => sum + grade, 0);
+
+            const mathAverage = (mathSum / mathScores.length).toFixed(2);
+            const englishAverage = (englishSum / englishScores.length).toFixed(2);
+
+            const overallAverage = (
+                (mathSum + englishSum) / (mathScores.length + englishScores.length)
+            ).toFixed(2);
+
+            mathAverageCell.textContent = mathAverage;
+            englishAverageCell.textContent = englishAverage;
+            overallAverageCell.textContent = overallAverage;
+        }
+    </script>
+</body>
+</html>
